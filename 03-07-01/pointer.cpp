@@ -16,6 +16,9 @@ int main() {
     cout << "sizeof(p) = " << sizeof(p) << endl;
     cout << "sizeof(*p) = " << sizeof(*p) << endl;
     cout << "sizeof(&p) = " << sizeof(&p) << endl;
+
+    cout << "&*p = " << &*p << endl;
+    cout << "*&p = " << *&p << endl;
     return 0;
 }
 

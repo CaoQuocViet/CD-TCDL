@@ -1,0 +1,20 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+
+# IDE specific files
+.vscode/
+.vs/
+
+# Build directories
+build/
+Debug/
+Release/
+
+# Temporary files
+*.tmp
+*~

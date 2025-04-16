@@ -39,24 +39,63 @@ int processCommand(const std::string& command) {
 
     // First split into statements
     while (std::getline(iss, temp, ';')) {
-        statements.push_back(temp);
+        if (!temp.empty()) {
+            // Trim leading and trailing whitespaces
+            size_t first = temp.find_first_not_of(" \t\n\r");
+            size_t last = temp.find_last_not_of(" \t\n\r");
+            if (first != std::string::npos && last != std::string::npos) {
+                statements.push_back(temp.substr(first, last - first + 1));
+            }
+            else if (first != std::string::npos) {
+                statements.push_back(temp.substr(first));
+            }
+            else if (last != std::string::npos) {
+                statements.push_back(temp.substr(0, last + 1));
+            }
+        }
     }
 
     if (statements.empty()) {
         throw std::runtime_error("Lenh trong");
     }
 
+    int result = 0;
     // Process each statement
-    std::string combinedExpression;
     for (size_t i = 0; i < statements.size(); ++i) {
-        if (i > 0) {
-            combinedExpression += " ; ";
+        std::string stmt = statements[i];
+        
+        // Check if statement is an assignment
+        size_t equalsPos = stmt.find('=');
+        if (equalsPos != std::string::npos && equalsPos > 0 && equalsPos < stmt.length() - 1) {
+            // Get variable name (left side)
+            std::string varStr = stmt.substr(0, equalsPos);
+            varStr.erase(0, varStr.find_first_not_of(" \t\r\n"));
+            varStr.erase(varStr.find_last_not_of(" \t\r\n") + 1);
+            
+            if (varStr.length() != 1 || !isalpha(varStr[0])) {
+                throw std::runtime_error("Ve trai cua phep gan phai la bien (chu cai)");
+            }
+            
+            char varName = varStr[0];
+            
+            // Get expression (right side)
+            std::string exprStr = stmt.substr(equalsPos + 1);
+            exprStr.erase(0, exprStr.find_first_not_of(" \t\r\n"));
+            exprStr.erase(exprStr.find_last_not_of(" \t\r\n") + 1);
+            
+            // Evaluate expression
+            result = evaluateExpression(exprStr, variables);
+            
+            // Store result in variable
+            variables[varName] = result;
         }
-        combinedExpression += statements[i];
+        else {
+            // Just an expression to evaluate
+            result = evaluateExpression(stmt, variables);
+        }
     }
 
-    // Evaluate the combined expression
-    return evaluateExpression(combinedExpression, variables);
+    return result;
 }
 
 // Helper function to display expression in all forms

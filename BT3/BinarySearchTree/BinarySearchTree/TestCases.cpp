@@ -111,13 +111,13 @@ NODE* createSampleTree() {
     insertNode(&root, 60, 'F');
     insertNode(&root, 80, 'G');
     
-    std::cout << "    /* Cau truc cay:\n";
+    std::cout << "    /* Cau truc cay:\n\n";
     std::cout << "               50(A)\n";
     std::cout << "             /       \\\n";
     std::cout << "         30(B)       70(C)\n";
     std::cout << "        /     \\     /     \\\n";
     std::cout << "     20(D)  40(E) 60(F)  80(G)\n";
-    std::cout << "    */\n";
+    std::cout << "    */\n\n";
     
     return root;
 }
@@ -133,7 +133,7 @@ NODE* createUnbalancedTree() {
     insertNode(&root, 40, 'D');
     insertNode(&root, 50, 'E');
     
-    std::cout << "    /* Cau truc cay:\n";
+    std::cout << "    /* Cau truc cay:\n\n";
     std::cout << "        10(A)\n";
     std::cout << "          \\\n";
     std::cout << "          20(B)\n";
@@ -143,7 +143,7 @@ NODE* createUnbalancedTree() {
     std::cout << "              40(D)\n";
     std::cout << "                \\\n";
     std::cout << "                50(E)\n";
-    std::cout << "    */\n";
+    std::cout << "    */\n\n";
 
     return root;
 }
@@ -169,7 +169,7 @@ NODE* createComplexTree() {
     insertNode(&root, 80, 'N');
     insertNode(&root, 90, 'O');
     
-    std::cout << "    /* Cau truc cay phuc tap:\n";
+    std::cout << "    /* Cau truc cay phuc tap:\n\n";
     std::cout << "                                50(A)\n";
     std::cout << "                       /                     \\\n";
     std::cout << "                 25(B)                         75(C)\n";

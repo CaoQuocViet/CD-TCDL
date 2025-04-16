@@ -52,10 +52,16 @@ def train_from_scratch():
     test_ds = make_dataset(test_pairs, source_vectorization, target_vectorization, batch_size)
     transformer.evaluate(test_ds)
 
-    print(transformer.predict('mot ngay troi nang mot ngay troi mua'))
-    print(transformer.predict('toi sinh ra o ha noi'))
-    print(transformer.predict('em con nho hay em da quen'))
-    print(transformer.predict('ten toi la thai duong'))
+    print(transformer.predict('1. Ha Noi la thu do cua Viet Nam, noi tieng voi lich su lau doi va van hoa dac sac.'))
+    print(transformer.predict('2. Ha Long Bay la mot trong nhung di san thien nhien the gioi duoc UNESCO cong nhan.'))
+    print(transformer.predict('3. Viet Nam co nen am thuc phong phu voi nhieu mon an ngon, dac biet la pho.'))
+    print(transformer.predict('4. Sai Gon luon la thanh pho nhon nhip va day nang dong.'))
+    print(transformer.predict('5. Nguoi dan Viet Nam rat hieu khach va than thien.'))
+    print(transformer.predict('6. Tet Nguyen Dan la le hoi lon nhat trong nam o Viet Nam.'))
+    print(transformer.predict('7. Duong pho Ha Noi dep nhat vao mua thu khi la vang roi.'))
+    print(transformer.predict('8. Cac mon an vat duong pho o Viet Nam rat hap dan va phong phu.'))
+    print(transformer.predict('9. Dia danh Hoi An noi tieng voi nhung ngoi nha co kin va anh den long lung linh.'))
+    print(transformer.predict('10. Viet Nam co nhieu canh dep thien nhien hung vi, tu nui rung den bien ca.'))
 
 def continue_training():
     source_vectorization = load_vectorization_from_disk('../result/source_vectorization_layer_cont.pkl')
@@ -72,10 +78,16 @@ def continue_training():
     test_ds = make_dataset(test_pairs, source_vectorization, target_vectorization, batch_size)
     transformer.evaluate(test_ds)
 
-    print(transformer.predict('mot ngay troi nang mot ngay troi mua'))
-    print(transformer.predict('toi sinh ra o ha noi'))
-    print(transformer.predict('em con nho hay em da quen'))
-    print(transformer.predict('ten toi la thai duong'))
+    print(transformer.predict('1. Ha Noi la thu do cua Viet Nam, noi tieng voi lich su lau doi va van hoa dac sac.'))
+    print(transformer.predict('2. Ha Long Bay la mot trong nhung di san thien nhien the gioi duoc UNESCO cong nhan.'))
+    print(transformer.predict('3. Viet Nam co nen am thuc phong phu voi nhieu mon an ngon, dac biet la pho.'))
+    print(transformer.predict('4. Sai Gon luon la thanh pho nhon nhip va day nang dong.'))
+    print(transformer.predict('5. Nguoi dan Viet Nam rat hieu khach va than thien.'))
+    print(transformer.predict('6. Tet Nguyen Dan la le hoi lon nhat trong nam o Viet Nam.'))
+    print(transformer.predict('7. Duong pho Ha Noi dep nhat vao mua thu khi la vang roi.'))
+    print(transformer.predict('8. Cac mon an vat duong pho o Viet Nam rat hap dan va phong phu.'))
+    print(transformer.predict('9. Dia danh Hoi An noi tieng voi nhung ngoi nha co kin va anh den long lung linh.'))
+    print(transformer.predict('10. Viet Nam co nhieu canh dep thien nhien hung vi, tu nui rung den bien ca.'))
 
 if __name__ == "__main__":
     train_from_scratch()

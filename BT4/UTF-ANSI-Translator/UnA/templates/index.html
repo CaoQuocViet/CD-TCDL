@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnA - UTF-8/ANSI Converter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+            background-image: url("{{ url_for('static', filename='img/background.gif') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .file-drop-area {
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .file-drop-area:hover {
+            border-color: #999;
+        }
+        .textarea-container {
+            margin-bottom: 15px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .preview-area {
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .app-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .app-title {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container app-container">
+        <h1 class="text-center mb-4 app-title">UnA - UTF-8/ANSI Converter</h1>
+        
+        <div class="card app-card mb-4">
+            <div class="card-header bg-primary text-white app-card-header">
+                <h5 class="mb-0">Convert Files</h5>
+            </div>
+            <div class="card-body app-card-body">
+                <form id="conversion-form" action="/convert" method="post" enctype="multipart/form-data">
+                    <div class="mb-3 converter-switch">
+                        <label for="direction" class="form-label">Conversion Direction</label>
+                        <select class="form-select" id="direction" name="direction">
+                            <option value="utf8_to_ansi">UTF-8 to ANSI (Remove diacritics)</option>
+                            <option value="ansi_to_utf8">ANSI to UTF-8 (Restore diacritics)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload File</label>
+                        <div class="file-drop-area" id="dropArea">
+                            <p>Drop file here or click to browse</p>
+                            <input type="file" class="form-control hidden" id="file-input" name="file">
+                        </div>
+                        <small class="text-muted">Selected file: <span id="file-name">None</span></small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="textInputSwitch">
+                            <label class="form-check-label" for="textInputSwitch">
+                                Or enter text directly
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 textarea-container hidden" id="text-input-area">
+                        <label for="text-input" class="form-label">Input Text</label>
+                        <textarea id="text-input" name="text" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary action-btn">Convert</button>
+                    </div>
+                </form>
+                
+                <div class="preview-container hidden" id="preview-container">
+                    <hr>
+                    <h5>Preview</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Before</h6>
+                            <pre id="before-preview" class="preview-panel"></pre>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>After</h6>
+                            <pre id="after-preview" class="preview-panel"></pre>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <a id="download-link" href="#" class="btn btn-success action-btn" download>Download Converted File</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card app-card">
+            <div class="card-header bg-info text-white app-card-header">
+                <h5 class="mb-0">Information</h5>
+            </div>
+            <div class="card-body app-card-body">
+                <ul class="info-list">
+                    <li><strong>UTF-8 to ANSI:</strong> Removes Vietnamese diacritics from text.</li>
+                    <li><strong>ANSI to UTF-8:</strong> Restores Vietnamese diacritics using a trained model.</li>
+                </ul>
+                <p><small>Note: The restoration of diacritics is based on a machine learning model and may not be 100% accurate.</small></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

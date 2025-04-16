@@ -17,12 +17,26 @@ def get_text_pairs(file_path, limit=None):
         limit = len(lines)
     i = 0
     for line in lines:
-        stripped, original = line.split('\t')
-        original = '[start] ' + original
-        text_pairs.append((stripped, original))
-        i += 1
-        if i >= limit:
-            break
+        try:
+            if '\t' not in line:
+                continue
+            parts = line.split('\t')
+            if len(parts) < 2:
+                continue
+                
+            stripped, original = parts[0], parts[1]
+            # Thêm kiểm tra để đảm bảo cả hai chuỗi không rỗng
+            if not stripped.strip() or not original.strip():
+                continue
+                
+            original = '[start] ' + original
+            text_pairs.append((stripped, original))
+            i += 1
+            if i >= limit:
+                break
+        except Exception as e:
+            print(f"Lỗi khi xử lý dòng: {line}, lỗi: {str(e)}")
+            continue
 
     return text_pairs
 
@@ -42,6 +56,7 @@ def split_pairs(text_pairs, ratio=.15, shuffle=False):
 
 def load_data(file_path, limit=None, ratio=.15, shuffle=False):
     text_pairs = get_text_pairs(file_path, limit)
+    print(f"Đã tải {len(text_pairs)} cặp văn bản từ {file_path}")
     return split_pairs(text_pairs, ratio, shuffle)
 
 

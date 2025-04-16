@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 from tensorflow.keras import layers
+import keras.ops as K
 
 
 class PositionalEmbedding(layers.Layer):
@@ -23,7 +24,7 @@ class PositionalEmbedding(layers.Layer):
         return embedded_tokens + embedded_positions
 
     def compute_mask(self, inputs, mask=None):
-        return tf.math.not_equal(inputs, 0)
+        return K.not_equal(inputs, 0)
 
     def get_config(self):
         config = super(PositionalEmbedding, self).get_config()

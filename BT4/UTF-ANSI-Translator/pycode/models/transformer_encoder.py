@@ -18,12 +18,16 @@ class TransformerEncoder(layers.Layer):
         )
         self.layernorm_1 = layers.LayerNormalization()
         self.layernorm_2 = layers.LayerNormalization()
+        self.supports_masking = True
 
     def call(self, inputs, mask=None):
+        attention_mask = None
         if mask is not None:
-            mask = mask[:, tf.newaxis, :]
+            # Chuyển đổi mask sang định dạng phù hợp với MultiHeadAttention mới
+            attention_mask = tf.cast(mask[:, tf.newaxis, :], dtype="int32")
+        
         attention_output = self.attention(
-            inputs, inputs, attention_mask=mask)
+            query=inputs, value=inputs, key=inputs, attention_mask=attention_mask)
         proj_input = self.layernorm_1(inputs + attention_output)
         proj_output = self.dense_proj(proj_input)
         return self.layernorm_2(proj_input + proj_output)

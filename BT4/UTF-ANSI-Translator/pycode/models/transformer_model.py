@@ -4,11 +4,16 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import load_model
+import sys
+import os
 
-from restore_vietnamese_diacritics.pycode.data.data_loader import load_vectorization_from_disk
-from positional_embedding import PositionalEmbedding
-from transformer_decoder import TransformerDecoder
-from transformer_encoder import TransformerEncoder
+# Thêm thư mục cha vào đường dẫn để import module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from data.data_loader import load_vectorization_from_disk
+from models.positional_embedding import PositionalEmbedding
+from models.transformer_decoder import TransformerDecoder
+from models.transformer_encoder import TransformerEncoder
 
 
 class TransformerModel:

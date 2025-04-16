@@ -9,7 +9,29 @@ namespace VietnameseCrawler.CsvCrawler
     {
         public async Task WriteAsync(IAsyncEnumerable<(string Original, string Stripped)> data, string outputPath)
         {
-            using (var fs = File.Open(outputPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+            // Ensure the directory exists
+            string directoryPath = outputPath;
+            string filePath = outputPath;
+
+            if (Directory.Exists(outputPath))
+            {
+                // It's a directory, create a default file name
+                filePath = Path.Combine(outputPath, "old-newspaper-vietnamese.txt");
+                directoryPath = outputPath;
+            }
+            else
+            {
+                // It's probably a file path
+                directoryPath = Path.GetDirectoryName(outputPath);
+            }
+
+            // Create directory if it doesn't exist
+            if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            using (var fs = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 using (var textWriter = new StreamWriter(fs, Encoding.UTF8))
                 {

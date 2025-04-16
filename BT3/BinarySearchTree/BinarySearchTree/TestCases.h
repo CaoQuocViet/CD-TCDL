@@ -10,6 +10,7 @@ void testBalance(NODE* root);
 // Sample tree creation
 NODE* createSampleTree();
 NODE* createUnbalancedTree();
+NODE* createComplexTree(); 
 
 // Run all tests
-void runAllTests(); 
+void runAllTests();

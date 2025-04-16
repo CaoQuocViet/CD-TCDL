@@ -7,14 +7,14 @@
 
 int main() {
     std::cout << "===========================================\n";
-    std::cout << "  BINARY SEARCH TREE IMPLEMENTATION TESTS\n";
+    std::cout << "  KIEM TRA CAI DAT CAY TIM KIEM NHI PHAN\n";
     std::cout << "===========================================\n";
     
     // Run all tests
     runAllTests();
     
     std::cout << "===========================================\n";
-    std::cout << "             TESTS COMPLETED\n";
+    std::cout << "             HOAN THANH KIEM TRA\n";
     std::cout << "===========================================\n";
     
     return 0;

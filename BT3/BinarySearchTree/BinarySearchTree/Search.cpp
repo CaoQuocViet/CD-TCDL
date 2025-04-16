@@ -1,4 +1,5 @@
 #include "BST.h"
+#include <iostream>
 
 // Iterative search function
 NODE* search(NODE* root, int k) {
@@ -28,4 +29,24 @@ NODE* searchRec(NODE* root, int k) {
 
     // Key is smaller than root's key
     return searchRec(root->left, k);
+}
+
+// Find direct children of root with key k
+NODE* searchChildren(NODE* root, int k) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+    
+    // Check left child
+    if (root->left != nullptr && root->left->key == k) {
+        return root->left;
+    }
+    
+    // Check right child
+    if (root->right != nullptr && root->right->key == k) {
+        return root->right;
+    }
+    
+    // Not found
+    return nullptr;
 }

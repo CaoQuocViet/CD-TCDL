@@ -2,6 +2,33 @@
 #include <iostream>
 #include <iomanip>
 
+// Test function for direct children search operations
+void testSearchChildren(NODE* root) {
+    std::cout << "=== Kiem tra chuc nang tim kiem cac node con truc tiep cua node root ===" << std::endl;
+    
+    // Test left child if exists
+    if (root && root->left) {
+        NODE* found = searchChildren(root, root->left->key);
+        std::cout << "Tim node con trai (key=" << root->left->key << "): ";
+        if (found)
+            std::cout << "Tim thay, data = " << found->data << std::endl;
+        else
+            std::cout << "Khong tim thay" << std::endl;
+    }
+    
+    // Test right child if exists
+    if (root && root->right) {
+        NODE* found = searchChildren(root, root->right->key);
+        std::cout << "Tim node con phai (key=" << root->right->key << "): ";
+        if (found)
+            std::cout << "Tim thay, data = " << found->data << std::endl;
+        else
+            std::cout << "Khong tim thay" << std::endl;
+    }
+    
+    std::cout << std::endl;
+}
+
 // Test function for search operations
 void testSearch(NODE* root) {
     std::cout << "=== Kiem tra chuc nang tim kiem ===" << std::endl;
@@ -161,6 +188,7 @@ void runAllTests() {
     NODE* balancedTree = createSampleTree();
     
     testSearch(balancedTree);
+    testSearchChildren(balancedTree);
     testMax(balancedTree);
     testSort(balancedTree);
     testBalance(balancedTree);
@@ -171,6 +199,7 @@ void runAllTests() {
     std::cout << "\n===== KIEM TRA CAY KHONG CAN BANG =====" << std::endl;
     NODE* unbalancedTree = createUnbalancedTree();
     
+    testSearchChildren(unbalancedTree);
     testSort(unbalancedTree);
     testBalance(unbalancedTree);
     
@@ -181,6 +210,7 @@ void runAllTests() {
     NODE* complexTree = createComplexTree();
     
     testSearch(complexTree);
+    testSearchChildren(complexTree);
     testMax(complexTree);
     testSort(complexTree);
     testBalance(complexTree);

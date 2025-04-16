@@ -3,6 +3,7 @@
 
 // Test function declarations
 void testSearch(NODE* root);
+void testSearchChildren(NODE* root);
 void testMax(NODE* root);
 void testSort(NODE* root);
 void testBalance(NODE* root);

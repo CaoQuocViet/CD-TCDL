@@ -175,16 +175,71 @@ void testFullCommands() {
     std::cout << "\n=== TEST LENH PHUC TAP ===\n";
     
     try {
+        // Ví dụ 1: Đề bài
         std::cout << "\nVi du 1: a = 1; b = 10 * a; a + 20 * b\n";
         int result = processCommand("a = 1; b = 10 * a; a + 20 * b");
         std::cout << "Ket qua: " << result << std::endl;
         
+        // Ví dụ 2: Nhiều biến và phép gán
         std::cout << "\nVi du 2: a = 5; b = a * 2; c = b - a; c * 3\n";
         result = processCommand("a = 5; b = a * 2; c = b - a; c * 3");
         std::cout << "Ket qua: " << result << std::endl;
         
+        // Ví dụ 3: Giai thừa và phép gán
         std::cout << "\nVi du 3: a = 3!; b = 2 * a; a + b\n";
         result = processCommand("a = 3!; b = 2 * a; a + b");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Thêm 10 ví dụ biểu thức phức tạp
+        
+        // Ví dụ 4: Phép gán nhiều biến và biểu thức ngoặc
+        std::cout << "\nVi du 4: a = 2; b = 3; c = (a + b) * 2; c - a\n";
+        result = processCommand("a = 2; b = 3; c = (a + b) * 2; c - a");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 5: Phép gán sử dụng lại biến
+        std::cout << "\nVi du 5: a = 10; a = a + 5; a * 2\n";
+        result = processCommand("a = 10; a = a + 5; a * 2");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 6: Phép gán với giai thừa và biểu thức phức tạp
+        std::cout << "\nVi du 6: a = 2; b = 3; c = (a + b)!; c % 10\n";
+        result = processCommand("a = 2; b = 3; c = (a + b)!; c % 10");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 7: Nhiều phép tính phức tạp với biến
+        std::cout << "\nVi du 7: x = 5; y = 3; z = x * y + (x - y); z / 2\n";
+        result = processCommand("x = 5; y = 3; z = x * y + (x - y); z / 2");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 8: Biến được gán lại nhiều lần
+        std::cout << "\nVi du 8: a = 1; a = a + 1; a = a * 2; a = a - 1; a\n";
+        result = processCommand("a = 1; a = a + 1; a = a * 2; a = a - 1; a");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 9: Biểu thức với nhiều phép toán khác nhau
+        std::cout << "\nVi du 9: a = 10; b = 3; c = a % b; d = a / b; c + d * 2\n";
+        result = processCommand("a = 10; b = 3; c = a % b; d = a / b; c + d * 2");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 10: Biến trong biểu thức được gán từ biểu thức phức tạp
+        std::cout << "\nVi du 10: a = 2 * (3 + 1); b = a / 2; c = b!; c - a\n";
+        result = processCommand("a = 2 * (3 + 1); b = a / 2; c = b!; c - a");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 11: Gán biến với giá trị âm và dùng phép đối dấu
+        std::cout << "\nVi du 11: a = -5; b = -a; c = a * b; -c\n";
+        result = processCommand("a = -5; b = -a; c = a * b; -c");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 12: Trường hợp phức tạp với nhiều phép toán và biến
+        std::cout << "\nVi du 12: a = 10; b = 20; c = 5; (a + b) * c - b / c\n";
+        result = processCommand("a = 10; b = 20; c = 5; (a + b) * c - b / c");
+        std::cout << "Ket qua: " << result << std::endl;
+        
+        // Ví dụ 13: Kết hợp tất cả các phép toán
+        std::cout << "\nVi du 13: a = 4; b = 3; c = 2; a * b / c + a - b % c\n";
+        result = processCommand("a = 4; b = 3; c = 2; a * b / c + a - b % c");
         std::cout << "Ket qua: " << result << std::endl;
     }
     catch (const std::exception& e) {

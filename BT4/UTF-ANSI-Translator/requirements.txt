@@ -1,0 +1,8 @@
+flask
+tensorflow
+unidecode
+chardet
+python-magic
+numpy
+transformers
+torch

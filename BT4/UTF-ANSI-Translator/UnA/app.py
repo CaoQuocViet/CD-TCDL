@@ -69,16 +69,26 @@ def convert():
                 
             output_path = os.path.join(app.config['TEMP_FOLDER'], f"{filename_base}_{unique_id}_output{filename_ext}")
             
-            # Read original content
-            original_content, original_encoding = read_file(input_path)
-            print(f"File read with encoding: {original_encoding}")
+            # Convert file using the improved converter method
+            output_path = converter.convert_file(input_path, output_path, direction)
             
-            # Convert file
-            converter.convert_file(input_path, output_path, direction)
-            
-            # Read converted content
-            converted_content, converted_encoding = read_file(output_path)
-            print(f"Conversion complete. Output encoding: {converted_encoding}")
+            # Read the files for display in the UI, with robust error handling
+            try:
+                original_content, original_encoding = read_file(input_path)
+                converted_content, converted_encoding = read_file(output_path)
+            except Exception as e:
+                print(f"Warning: Error reading content for display: {e}")
+                # Use simpler approach for UI display
+                try:
+                    with open(input_path, 'rb') as f:
+                        original_content = f.read().decode('latin-1', errors='replace')
+                    with open(output_path, 'rb') as f:
+                        converted_content = f.read().decode('latin-1', errors='replace')
+                    original_encoding = 'unknown'
+                    converted_encoding = 'unknown'
+                except Exception as e2:
+                    print(f"Critical error reading files: {e2}")
+                    return jsonify({'error': f"Error processing files: {e2}"}), 500
             
             # Print samples for debugging
             print(f"Input sample: '{original_content[:50]}...'")

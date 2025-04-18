@@ -26,7 +26,15 @@ def predict():
             return jsonify({"error": "Missing 'text' field in request"}), 400
         
         # Get input text
-        input_text = data['text']
+        input_text = data['text'].strip()
+        
+        # Skip empty input
+        if not input_text:
+            return jsonify({
+                "input": "",
+                "output": "",
+                "success": True
+            })
         
         # Process with model
         result = add_accent(input_text)
@@ -51,6 +59,16 @@ if __name__ == '__main__':
     print("="*60)
     print(f" Service running at: http://localhost:{PORT}")
     print("="*60)
+    
+    # Try a test prediction
+    try:
+        test_text = "toi yeu tieng viet khong dau"
+        result = add_accent(test_text)
+        print(f" Test prediction: '{test_text}' -> '{result}'")
+        print("="*60)
+    except Exception as e:
+        print(f" Error in test prediction: {e}")
+        print("="*60)
     
     # Run the app
     app.run(debug=False, host='0.0.0.0', port=PORT) 

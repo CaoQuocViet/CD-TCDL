@@ -33,11 +33,17 @@ def read_file(file_path, encoding=None):
             encoding = result['encoding']
             return raw_data.decode(encoding, errors='replace'), encoding
 
-def write_file(file_path, content, encoding):
+def write_file(file_path, content, encoding, errors='strict'):
     """
     Write content to a file with the specified encoding
+    
+    Args:
+        file_path: Path to the output file
+        content: Content to write
+        encoding: Encoding to use
+        errors: How to handle encoding errors ('strict', 'replace', 'ignore')
     """
-    with open(file_path, 'w', encoding=encoding) as file:
+    with open(file_path, 'w', encoding=encoding, errors=errors) as file:
         file.write(content)
     return file_path
 

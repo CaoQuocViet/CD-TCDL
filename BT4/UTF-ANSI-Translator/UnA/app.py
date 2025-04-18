@@ -11,7 +11,7 @@ import traceback
 from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
 
 from modules.converter import Converter
-from modules.utils import read_file, get_temp_directory
+from modules.utils import read_file, write_file, get_temp_directory
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -108,10 +108,12 @@ def convert():
             # Convert text
             if direction == 'utf8_to_ansi':
                 converted_text = converter.utf8_to_ansi(input_text=input_text)
-                output_encoding = 'ansi'
+                output_encoding = 'ascii'  # Use ASCII instead of ANSI
+                errors = 'replace'  # Replace any non-ASCII character with ?
             else:
                 converted_text = converter.ansi_to_utf8(input_text=input_text)
                 output_encoding = 'utf-8'
+                errors = 'strict'  # UTF-8 can handle all characters
             
             print(f"Output sample: '{converted_text[:50]}...'")
             
@@ -124,9 +126,14 @@ def convert():
                 
             output_path = os.path.join(app.config['TEMP_FOLDER'], output_filename)
             
-            # Write to file for download
-            with open(output_path, 'w', encoding=output_encoding) as f:
-                f.write(converted_text)
+            # Write to file for download with proper error handling
+            try:
+                write_file(output_path, converted_text, encoding=output_encoding, errors=errors)
+            except Exception as e:
+                print(f"Warning: Error writing file: {e}")
+                # Try with more aggressive error handling
+                with open(output_path, 'w', encoding=output_encoding, errors='replace') as f:
+                    f.write(converted_text)
             
             # Create response
             response = {
@@ -157,13 +164,13 @@ def direct_predict():
         input_text = data['text']
         print(f"Direct prediction request: '{input_text}'")
         
-        # Check if we have a working model adapter through converter
-        if not hasattr(converter, 'model_adapter') or not converter.model_adapter.model_loaded:
-            print("Error: No working model adapter available")
-            return jsonify({'error': 'Diacritic restoration model not available'}), 500
+        # Check if model service is available
+        if not hasattr(converter, 'model_service_available') or not converter.model_service_available:
+            print("Error: Model service not available")
+            return jsonify({'error': 'Diacritic restoration model service not available'}), 500
         
-        # Use model adapter to restore diacritics
-        result = converter.model_adapter.restore_diacritics(input_text)
+        # Process through converter
+        result = converter.ansi_to_utf8(input_text=input_text)
         print(f"Diacritic restoration result: '{result}'")
         
         return jsonify({
@@ -217,7 +224,7 @@ if __name__ == '__main__':
     
     # Debug information
     print(f"Temp directory: {TEMP_DIR}")
-    print(f"Model loaded: {hasattr(converter, 'model_adapter') and converter.model_adapter.model_loaded}")
+    print(f"Model service available: {converter.model_service_available}")
     
     # Run Flask app
     app.run(debug=True, host='0.0.0.0', port=5000) 

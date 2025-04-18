@@ -6,6 +6,8 @@ Tool for converting between UTF-8 and ANSI encodings, with Vietnamese diacritic 
 
 - UTF-8 to ANSI conversion: Removes diacritics from Vietnamese text
 - ANSI to UTF-8 conversion: Restores diacritics to Vietnamese text using machine learning model
+- Preserves line breaks and formatting in both conversion directions
+- Fully preserves text structure for documents with multiple paragraphs
 
 ## Setup
 
@@ -41,6 +43,16 @@ The easiest way to start the services is to use the batch files:
 
 The web interface will automatically open in your browser at http://localhost:5000.
 
+### Testing the services
+
+You can run the test script to verify both conversion directions are working properly:
+
+```
+python test_conversion.py
+```
+
+This will test both UTF-8 to ANSI and ANSI to UTF-8 conversions with multi-line text.
+
 ## Usage
 
 1. Go to http://localhost:5000 in your browser
@@ -53,4 +65,7 @@ The web interface will automatically open in your browser at http://localhost:50
 
 - The Model service runs on port 5001
 - The UnA web interface runs on port 5000
-- The Model service must be running for ANSI to UTF-8 conversion with diacritic restoration to work 
+- The Model service must be running for ANSI to UTF-8 conversion with diacritic restoration to work
+- Line breaks are preserved in both conversion directions
+- UTF-8 to ANSI conversion uses a direct character mapping for Vietnamese diacritics
+- ANSI to UTF-8 conversion processes text line by line to preserve formatting 

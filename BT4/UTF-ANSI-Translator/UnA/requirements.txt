@@ -1,6 +1,10 @@
 flask
-tensorflow
 unidecode
 chardet
 python-magic
 numpy
+torch
+transformers
+tqdm
+sentencepiece
+requests

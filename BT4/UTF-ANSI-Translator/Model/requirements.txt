@@ -1,3 +1,6 @@
+flask
 transformers
 torch
 numpy
+tqdm
+sentencepiece

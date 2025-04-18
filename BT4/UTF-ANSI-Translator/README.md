@@ -1,90 +1,56 @@
-# Vietnamese Diacritic Restoration
+# UTF-ANSI Translator
 
-Transformer-based model to restore Vietnamese diacritics.
+Tool for converting between UTF-8 and ANSI encodings, with Vietnamese diacritic restoration.
 
-## ⚙️ Cấu hình & Chạy dự án
+## Features
 
-### Chuẩn bị dữ liệu
+- UTF-8 to ANSI conversion: Removes diacritics from Vietnamese text
+- ANSI to UTF-8 conversion: Restores diacritics to Vietnamese text using machine learning model
 
-1. Tải và giải nén dataset từ Kaggle:  
-   [Old Newspaper Dataset](https://www.kaggle.com/alvations/old-newspapers)
+## Setup
 
-2. Chạy lệnh sau để xử lý dữ liệu đầu vào:
-```bash
-dotnet run <input file path> <output file path>
-```
+1. Install Python 3.8 or newer
+2. Install required packages:
+   ```
+   cd Model
+   pip install -r requirements.txt
+   cd ../UnA
+   pip install -r requirements.txt
+   ```
 
----
+## Running the application
 
-### Huấn luyện mô hình
+The application consists of two services:
 
-```python
-from data_loader import load_data, make_dataset, save_vectorization
-from transformer_model import TransformerModel
+1. Model Service - Handles diacritic restoration
+2. UnA - Web interface for text conversion
 
-# Load và xử lý dữ liệu
-train_pairs, val_pairs, test_pairs = load_data('dataset/old-newspaper-vietnamese.txt', limit=10000)
+### Starting the services
 
-# Vectorization
-source_vectorization, target_vectorization = create_vectorizations(train_pairs)
-save_vectorization(source_vectorization, 'result/source_vectorization_layer.pkl')
-save_vectorization(target_vectorization, 'result/target_vectorization_layer.pkl')
+The easiest way to start the services is to use the batch files:
 
-# Dataset
-train_ds = make_dataset(train_pairs, source_vectorization, target_vectorization, batch_size=64)
-val_ds = make_dataset(val_pairs, source_vectorization, target_vectorization, batch_size=64)
+1. First, start the Model service:
+   ```
+   start_model_service.bat
+   ```
 
-# Mô hình
-transformer = TransformerModel(
-    source_vectorization=source_vectorization,
-    target_vectorization=target_vectorization,
-    dense_dim=8192,
-    num_heads=8,
-    drop_out=0
-)
+2. Then, start the UnA web interface:
+   ```
+   start_translator.bat
+   ```
 
-transformer.build_model(
-    optimizer="rmsprop",
-    loss="sparse_categorical_crossentropy",
-    metrics=["accuracy"]
-)
+The web interface will automatically open in your browser at http://localhost:5000.
 
-transformer.fit(
-    train_ds,
-    epochs=50,
-    validation_data=val_ds
-)
-```
+## Usage
 
----
+1. Go to http://localhost:5000 in your browser
+2. Choose conversion direction (UTF-8 to ANSI or ANSI to UTF-8)
+3. Enter text or upload a file
+4. Click "Convert"
+5. Download or copy the converted text
 
-### Dự đoán bằng mô hình đã huấn luyện
+## Technical Details
 
-```python
-transformer = TransformerModel(
-    source_vectorization='result/source_vectorization_layer_cont.pkl',
-    target_vectorization='result/target_vectorization_layer_cont.pkl',
-    model_path='result/restore_diacritic.keras'
-)
-
-print(transformer.predict('co phai em la mua thu ha noi'))
-```
-
----
-
-### Tiếp tục huấn luyện từ checkpoint
-
-```python
-from data_loader import load_vectorization_from_disk
-
-source_vectorization = load_vectorization_from_disk('result/source_vectorization_layer_cont.pkl')
-target_vectorization = load_vectorization_from_disk('result/target_vectorization_layer_cont.pkl')
-
-transformer = TransformerModel(
-    source_vectorization=source_vectorization,
-    target_vectorization=target_vectorization,
-    model_path='result/restore_diacritic_cont.keras'
-)
-
-transformer.fit(train_ds, epochs=50, validation_data=val_ds)
-```
+- The Model service runs on port 5001
+- The UnA web interface runs on port 5000
+- The Model service must be running for ANSI to UTF-8 conversion with diacritic restoration to work 

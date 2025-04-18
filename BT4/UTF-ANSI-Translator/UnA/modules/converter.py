@@ -188,14 +188,58 @@ class Converter:
         
         try:
             if direction == 'utf8_to_ansi':
-                _, output_path = self.utf8_to_ansi(input_file=input_file, output_file=output_file)
+                # Read the file first
+                try:
+                    input_text, encoding = read_file(input_file)
+                    print(f"Read file with encoding: {encoding}")
+                    result = self.utf8_to_ansi(input_text=input_text)
+                    # Write with proper encoding and error handling
+                    write_file(output_file, result, encoding='ascii', errors='replace')
+                except Exception as e:
+                    print(f"Error processing file {input_file}: {e}")
+                    traceback.print_exc()
+                    # Try a more direct approach by opening in binary mode
+                    with open(input_file, 'rb') as f:
+                        content = f.read()
+                        # Try to decode with common encodings
+                        for enc in ['utf-8', 'cp1252', 'latin-1']:
+                            try:
+                                text = content.decode(enc, errors='replace')
+                                result = self.utf8_to_ansi(input_text=text)
+                                write_file(output_file, result, encoding='ascii', errors='replace')
+                                print(f"Successfully converted using encoding: {enc}")
+                                break
+                            except Exception:
+                                continue
+                        else:
+                            # If all fail, use latin-1 which can decode any byte sequence
+                            text = content.decode('latin-1', errors='replace')
+                            result = self.utf8_to_ansi(input_text=text)
+                            write_file(output_file, result, encoding='ascii', errors='replace')
+                            print("Used latin-1 encoding as fallback")
             elif direction == 'ansi_to_utf8':
-                _, output_path = self.ansi_to_utf8(input_file=input_file, output_file=output_file)
+                # Read the file with ANSI encoding
+                try:
+                    input_text, encoding = read_file(input_file, encoding='ascii')
+                    print(f"Read file with encoding: {encoding}")
+                    result = self.ansi_to_utf8(input_text=input_text)
+                    # Write with UTF-8 encoding
+                    write_file(output_file, result, encoding='utf-8')
+                except Exception as e:
+                    print(f"Error processing file {input_file}: {e}")
+                    traceback.print_exc()
+                    # Try a more direct approach
+                    with open(input_file, 'rb') as f:
+                        content = f.read()
+                        text = content.decode('latin-1', errors='replace')
+                        result = self.ansi_to_utf8(input_text=text)
+                        write_file(output_file, result, encoding='utf-8')
+                        print("Used latin-1 encoding as fallback")
             else:
                 raise ValueError(f"Unknown direction: {direction}")
             
-            print(f"Conversion successful: {output_path}")
-            return output_path
+            print(f"Conversion successful: {output_file}")
+            return output_file
         except Exception as e:
             print(f"Error during file conversion: {e}")
             traceback.print_exc()

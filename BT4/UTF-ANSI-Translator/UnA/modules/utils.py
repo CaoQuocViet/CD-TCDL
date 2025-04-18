@@ -13,7 +13,10 @@ def detect_encoding(file_path):
     with open(file_path, 'rb') as file:
         raw_data = file.read()
         result = chardet.detect(raw_data)
-        return result['encoding']
+        if result and result['encoding']:
+            return result['encoding']
+        # Default to utf-8 if detection fails
+        return 'utf-8'
 
 def read_file(file_path, encoding=None):
     """
@@ -22,6 +25,10 @@ def read_file(file_path, encoding=None):
     if not encoding:
         encoding = detect_encoding(file_path)
     
+    # Ensure we have a valid encoding
+    if not encoding:
+        encoding = 'utf-8'  # Use UTF-8 as fallback
+    
     try:
         with open(file_path, 'r', encoding=encoding) as file:
             return file.read(), encoding
@@ -29,9 +36,15 @@ def read_file(file_path, encoding=None):
         # Fallback to binary mode and try to decode
         with open(file_path, 'rb') as file:
             raw_data = file.read()
-            result = chardet.detect(raw_data)
-            encoding = result['encoding']
-            return raw_data.decode(encoding, errors='replace'), encoding
+            # Try several common encodings
+            for enc in ['utf-8', 'cp1252', 'latin-1', 'ascii']:
+                try:
+                    return raw_data.decode(enc, errors='replace'), enc
+                except UnicodeDecodeError:
+                    continue
+            
+            # If all fail, use latin-1 which can decode any byte sequence
+            return raw_data.decode('latin-1', errors='replace'), 'latin-1'
 
 def write_file(file_path, content, encoding, errors='strict'):
     """
@@ -43,6 +56,10 @@ def write_file(file_path, content, encoding, errors='strict'):
         encoding: Encoding to use
         errors: How to handle encoding errors ('strict', 'replace', 'ignore')
     """
+    # Ensure we have a valid encoding
+    if not encoding:
+        encoding = 'utf-8'  # Use UTF-8 as fallback
+        
     with open(file_path, 'w', encoding=encoding, errors=errors) as file:
         file.write(content)
     return file_path

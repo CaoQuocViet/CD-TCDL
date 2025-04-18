@@ -10,7 +10,6 @@ import uuid
 import traceback
 from flask import Flask, render_template, request, jsonify, send_from_directory, url_for
 
-from modules.predictor import Predictor
 from modules.converter import Converter
 from modules.utils import read_file, get_temp_directory
 
@@ -22,26 +21,15 @@ TEMP_DIR = get_temp_directory()
 app.config['TEMP_FOLDER'] = TEMP_DIR
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max file size
 
-# Initialize predictor and converter
+# Initialize converter with ModelAdapter
 try:
-    print("Initializing predictor...")
-    predictor = Predictor()
-    
-    # Test predictor
-    if hasattr(predictor, 'model_loaded') and predictor.model_loaded:
-        print("Testing predictor with sample text...")
-        test_result = predictor.predict("day la mot thu nghiem")
-        print(f"Test result: {test_result}")
-    else:
-        print("Warning: Predictor model not loaded correctly")
-    
-    print("Initializing converter...")
-    converter = Converter(predictor=predictor)
+    print("Initializing converter with model adapter...")
+    converter = Converter()
 except Exception as e:
-    print(f"Error initializing predictor or converter: {e}")
+    print(f"Error initializing converter: {e}")
     traceback.print_exc()
-    # Initialize converter without predictor if there's an error
-    print("Falling back to converter without predictor")
+    # Initialize converter anyway
+    print("Initializing converter without model adapter")
     converter = Converter()
 
 @app.route('/')
@@ -160,7 +148,7 @@ def convert():
 
 @app.route('/predict', methods=['POST'])
 def direct_predict():
-    """Direct API endpoint to test the predictor model"""
+    """Direct API endpoint to test diacritic restoration"""
     try:
         data = request.get_json()
         if not data or 'text' not in data:
@@ -169,14 +157,14 @@ def direct_predict():
         input_text = data['text']
         print(f"Direct prediction request: '{input_text}'")
         
-        # Check if we have a working predictor
-        if not hasattr(predictor, 'model_loaded') or not predictor.model_loaded:
-            print("Error: No working predictor available")
-            return jsonify({'error': 'Predictor model not available'}), 500
+        # Check if we have a working model adapter through converter
+        if not hasattr(converter, 'model_adapter') or not converter.model_adapter.model_loaded:
+            print("Error: No working model adapter available")
+            return jsonify({'error': 'Diacritic restoration model not available'}), 500
         
-        # Use predictor to restore diacritics
-        result = predictor.predict(input_text)
-        print(f"Prediction result: '{result}'")
+        # Use model adapter to restore diacritics
+        result = converter.model_adapter.restore_diacritics(input_text)
+        print(f"Diacritic restoration result: '{result}'")
         
         return jsonify({
             'input': input_text,
@@ -184,7 +172,7 @@ def direct_predict():
         })
     
     except Exception as e:
-        print(f"Error during prediction: {e}")
+        print(f"Error during diacritic restoration: {e}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -229,7 +217,7 @@ if __name__ == '__main__':
     
     # Debug information
     print(f"Temp directory: {TEMP_DIR}")
-    print(f"Model loaded: {hasattr(predictor, 'model_loaded') and predictor.model_loaded}")
+    print(f"Model loaded: {hasattr(converter, 'model_adapter') and converter.model_adapter.model_loaded}")
     
     # Run Flask app
     app.run(debug=True, host='0.0.0.0', port=5000) 

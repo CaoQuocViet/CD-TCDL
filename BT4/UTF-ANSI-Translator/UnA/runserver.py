@@ -2,86 +2,107 @@
 # -*- coding: utf-8 -*-
 
 """
-Run script for UnA - UTF-8/ANSI Converter
-This script will simply import and run the main app.py
+RunServer script for UnA - UTF-8/ANSI Converter Web Application
 """
 
 import os
 import sys
-import traceback
+import time
+import logging
+import webbrowser
+import threading
+import requests
+from app import app, converter
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+logger = logging.getLogger("UnA")
+
+def open_browser():
+    """Open browser after a short delay to ensure server is running"""
+    time.sleep(1)
+    webbrowser.open('http://localhost:5000')
+
+def check_model_service():
+    """Check if the Model service is running"""
+    try:
+        response = requests.get("http://localhost:5001/status", timeout=2)
+        if response.status_code == 200:
+            logger.info("Model service is running correctly")
+            return True
+        else:
+            logger.warning(f"Model service returned error: {response.status_code}")
+            return False
+    except Exception as e:
+        logger.warning(f"Model service not available: {e}")
+        return False
 
 def main():
-    # Add the current directory to the path
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_dir not in sys.path:
-        sys.path.append(current_dir)
+    """Main function to run the server"""
+    # Current working directory
+    cwd = os.getcwd()
+    logger.info(f"Current working directory: {cwd}")
     
-    # Add parent directory to path to potentially find pycode
-    parent_dir = os.path.dirname(current_dir)
-    if parent_dir not in sys.path:
-        sys.path.append(parent_dir)
-    
-    # Check for model files
-    result_dir = os.path.join(parent_dir, 'result')
-    if os.path.exists(result_dir):
-        print(f"Found result directory at: {result_dir}")
-        model_path = os.path.join(result_dir, 'restore_diacritic.keras')
-        source_vec_path = os.path.join(result_dir, 'source_vectorization_layer.pkl')
-        target_vec_path = os.path.join(result_dir, 'target_vectorization_layer.pkl')
+    # Check for Model service
+    model_service_running = check_model_service()
+    if not model_service_running:
+        logger.warning("Model service is not running!")
+        logger.warning("ANSI to UTF-8 conversion with diacritic restoration will not work")
+        logger.warning("")
+        logger.warning("To start the Model service, open a new terminal and run:")
+        logger.warning("cd ../Model")
+        logger.warning("python model_service.py")
+        logger.warning("")
         
-        print(f"Model file exists: {os.path.exists(model_path)}")
-        print(f"Source vectorization exists: {os.path.exists(source_vec_path)}")
-        print(f"Target vectorization exists: {os.path.exists(target_vec_path)}")
-    else:
-        print(f"Warning: Result directory not found at {result_dir}")
+        # Ask user if they want to continue
+        response = input("Do you want to continue without the Model service? (y/n): ")
+        if response.lower() != 'y':
+            logger.info("Exiting. Please start the Model service first.")
+            sys.exit(0)
     
-    # Check for pycode directory
-    pycode_dir = os.path.join(parent_dir, 'pycode')
-    if os.path.exists(pycode_dir):
-        print(f"Found pycode directory at: {pycode_dir}")
-        models_dir = os.path.join(pycode_dir, 'models')
-        if os.path.exists(models_dir):
-            print(f"Found models directory at: {models_dir}")
-            # Add to sys.path
-            if models_dir not in sys.path:
-                sys.path.append(models_dir)
-    else:
-        print(f"Warning: Pycode directory not found at {pycode_dir}")
+    # Print server information
+    host = '0.0.0.0'
+    port = 5000
     
-    # Import and run the app
+    # Print welcome message
+    print("="*60)
+    print(" UnA - UTF-8/ANSI Converter & Vietnamese Diacritic Restorer")
+    print("="*60)
+    print(f" Server running at:")
+    print(f" - Local:   http://localhost:{port}")
+    
+    # Get all IP addresses
+    import socket
     try:
-        print("Initializing UnA application...")
-        
-        # Import the modules
-        from modules.predictor import Predictor
-        
-        # Test predictor with example
-        print("Testing predictor with sample text...")
-        predictor = Predictor()
-        if hasattr(predictor, 'model_loaded') and predictor.model_loaded:
-            test_text = "day la mot thu nghiem"
-            result = predictor.predict(test_text)
-            print(f"Sample prediction: '{test_text}' -> '{result}'")
-        else:
-            print("Warning: Predictor not loaded correctly")
-        
-        # Import and run the app
-        from app import app
-        
-        print("\nStarting UnA - UTF-8/ANSI Converter...")
-        print("Open your browser and go to http://localhost:5000")
-        print("Press Ctrl+C to stop the server")
-        
-        app.run(debug=True, host='0.0.0.0', port=5000)
-    except ImportError as e:
-        print(f"Error importing app: {e}")
-        traceback.print_exc()
-        print("Make sure you are in the correct directory and have installed all requirements")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error running app: {e}")
-        traceback.print_exc()
-        sys.exit(1)
+        hostname = socket.gethostname()
+        ips = socket.gethostbyname_ex(hostname)[2]
+        for ip in ips:
+            if ip.startswith('192.168.') or ip.startswith('10.') or ip.startswith('172.'):
+                print(f" - Network: http://{ip}:{port}")
+    except:
+        pass
+    
+    print("="*60)
+    print(" Features:")
+    print(" - UTF-8 to ANSI conversion")
+    if model_service_running:
+        print(" - ANSI to UTF-8 conversion with diacritic restoration (Model service running)")
+    else:
+        print(" - ANSI to UTF-8 conversion (Warning: Model service not running)")
+    print("="*60)
+    
+    # Open browser automatically
+    threading.Thread(target=open_browser).start()
+    
+    # Run the app
+    app.run(debug=False, host=host, port=port)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main() 
